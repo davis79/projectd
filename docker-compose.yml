@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+    volumes:
+      - ./app/php:/application
+  webserver:
+    image: 'nginx:1.24.0-alpine'
+    working_dir: /application
+    volumes:
+      - ./app/php:/application
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8001:80"
+  mysql:
+    image: 'mysql:8.0.32'
+    working_dir: /application
+    volumes:
+      - .:/application
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=database
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3009:3006"
+
